@@ -1,7 +1,7 @@
 unit SpTBXSkins;
 
 {==============================================================================
-Version 2.5.10
+Version 2.5.12
 
 The contents of this file are subject to the SpTBXLib License; you may
 not use or distribute this file except in compliance with the
@@ -43,9 +43,7 @@ Development notes:
 interface
 
 {$BOOLEVAL OFF}   // Unit depends on short-circuit boolean evaluation
-{$IF CompilerVersion >= 25} // for Delphi XE4 and up
-  {$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
-{$IFEND}
+{$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
 
 uses
   Windows, Messages, Classes, SysUtils, Graphics, Controls, StdCtrls,
@@ -658,12 +656,8 @@ end;
 
 function SpTBXStyleServices(AControl: TControl): TCustomStyleServices;
 begin
-  {$IF CompilerVersion >= 34} // for 10.4 Sydney and up
   // Sydney introduced per control styles, StyleName property
   Result := StyleServices(AControl);
-  {$ELSE}
-  Result := StyleServices;
-  {$IFEND}
 end;
 
 function SkinManager: TSpTBXSkinManager;
@@ -3427,7 +3421,7 @@ end;
 
 function TSpTBXSkinOptions.GetThemedElementSize(AControl: TControl; ACanvas: TCanvas; Details: TThemedElementDetails; DPI: Integer): TSize;
 begin
-  SpTBXStyleServices(AControl).GetElementSize(ACanvas.Handle, Details, esActual, Result{$IF CompilerVersion >= 33}, DPI{$IFEND}); // DPI param introduced on 10.3 Rio
+  SpTBXStyleServices(AControl).GetElementSize(ACanvas.Handle, Details, esActual, Result, DPI); // DPI param introduced on 10.3 Rio
 end;
 
 procedure TSpTBXSkinOptions.PaintBackground(ACanvas: TCanvas; ARect: TRect;
@@ -3463,7 +3457,7 @@ var
 begin
   SaveIndex := SaveDC(ACanvas.Handle);  // XE2 Styles changes the font
   try
-    SpTBXStyleServices(AControl).DrawElement(ACanvas.Handle, Details, ARect, nil{$IF CompilerVersion >= 33}, DPI{$IFEND}); // DPI param introduced on 10.3 Rio DPI
+    SpTBXStyleServices(AControl).DrawElement(ACanvas.Handle, Details, ARect, nil, DPI); // DPI param introduced on 10.3 Rio DPI
   finally
     RestoreDC(ACanvas.Handle, SaveIndex);
   end;
@@ -3722,7 +3716,6 @@ begin
 
   // Alexandria introduced design time styles
   // Sydney introduced per control styles
-  {$IF CompilerVersion >= 34} // for 10.4 Sydney and up
   if Assigned(AControl) then begin
     if AControl.IsCustomStyleActive then
       Result := sknDelphiStyle;
@@ -3730,10 +3723,6 @@ begin
   else
     if TStyleManager.IsCustomStyleActive then
       Result := sknDelphiStyle;
-  {$ELSE}
-  if TStyleManager.IsCustomStyleActive then
-    Result := sknDelphiStyle;
-  {$IFEND}
 
   if (Result = sknSkin) and IsDefaultSkin then
     Result := sknWindows;

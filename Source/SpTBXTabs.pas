@@ -1,7 +1,7 @@
 unit SpTBXTabs;
 
 {==============================================================================
-Version 2.5.10
+Version 2.5.12
 
 The contents of this file are subject to the SpTBXLib License; you may
 not use or distribute this file except in compliance with the
@@ -46,9 +46,7 @@ TODO:
 interface
 
 {$BOOLEVAL OFF}   // Unit depends on short-circuit boolean evaluation
-{$IF CompilerVersion >= 25} // for Delphi XE4 and up
-  {$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
-{$IFEND}
+{$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
 
 uses
   Windows, Messages, Classes, SysUtils, Controls, Graphics, ImgList, Forms,
@@ -124,9 +122,7 @@ type
     // property GroupIndex;
     property HelpContext;
     property ImageIndex;
-    {$IF CompilerVersion >= 34} // for Delphi Sydney and up
     property ImageName;
-    {$IFEND}
     property Images;
     property InheritOptions;
     property MaskOptions;
@@ -573,11 +569,7 @@ procedure SpDrawXPTabControlBackground(AControl: TControl; ACanvas: TCanvas; ARe
 implementation
 
 uses
-  Themes, UxTheme,
-  {$IF CompilerVersion >= 25} // for Delphi XE4 and up
-  System.UITypes,
-  {$IFEND}
-  TB2Common, Types;
+  Themes, UxTheme, System.UITypes, TB2Common, Types;
 
 type
   TTBItemViewerAccess = class(TTBItemViewer);

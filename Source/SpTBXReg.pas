@@ -65,7 +65,6 @@ type
   end;
 
   { TSpTBXImageNameEditor }
-  {$IF CompilerVersion >= 34} // for Delphi Sydney and up
   TSpTBXImageNameEditor = class(TStringProperty, ICustomPropertyListDrawing)
   public
     function GetAttributes: TPropertyAttributes; override;
@@ -77,17 +76,13 @@ type
     procedure ListMeasureWidth(const Value: string; ACanvas: TCanvas; var AWidth: Integer);
     procedure ListDrawValue(const Value: string; ACanvas: TCanvas; const ARect: TRect; ASelected: Boolean);
   end;
-  {$IFEND}
 
 procedure Register;
 
 implementation
 
 uses
-  {$IF CompilerVersion >= 24} // for Delphi XE3 and up
-  System.UITypes,
-  {$IFEND}
-  Forms, TypInfo;
+  System.UITypes, Forms, TypInfo;
 
 //WMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM
 { Helpers }
@@ -224,8 +219,6 @@ end;
 //WMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM
 { TSpTBXImageNameEditor }
 
-{$IF CompilerVersion >= 34} // Robert: for Delphi Sydney and up
-
 function TSpTBXImageNameEditor.GetAttributes: TPropertyAttributes;
 begin
   Result := [paMultiSelect, paValueList, paRevertable];
@@ -284,8 +277,6 @@ begin
   if Assigned(ImgList) then
     Inc(AWidth, ImgList.Width);
 end;
-
-{$IFEND}
 
 //WMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM
 
@@ -371,9 +362,7 @@ begin
   // Register ImageIndex and ImageName property editor for TSpTBXTextObject
   // descendants, this is needed to show the preview of images in the Object Inspector.
   RegisterPropertyEditor(TypeInfo(TImageIndex), TSpTBXTextObject, '', TSpTBXImageIndexEditor);
-  {$IF CompilerVersion >= 34} // for Delphi Sydney and up
   RegisterPropertyEditor(TypeInfo(TImageName), TSpTBXTextObject, '', TSpTBXImageNameEditor);
-  {$IFEND}
 end;
 
 end.

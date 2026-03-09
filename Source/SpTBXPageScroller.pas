@@ -1,7 +1,7 @@
 unit SpTBXPageScroller;
 
 {==============================================================================
-Version 2.5.10
+Version 2.5.12
 
 The contents of this file are subject to the SpTBXLib License; you may
 not use or distribute this file except in compliance with the
@@ -41,9 +41,7 @@ Development notes:
 interface
 
 {$BOOLEVAL OFF}   // Unit depends on short-circuit boolean evaluation
-{$IF CompilerVersion >= 25} // for Delphi XE4 and up
-  {$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
-{$IFEND}
+{$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
 
 uses
   Windows, Messages, Classes, Graphics, Controls, StdCtrls, ExtCtrls, Forms,
@@ -110,7 +108,7 @@ type
     procedure BeginScrolling(HitTest: Integer);
     function  CalcClientArea: TRect;
     function  CanAutoSize(var NewWidth, NewHeight: Integer): Boolean; override;
-    procedure ChangeScale(M, D: Integer{$if CompilerVersion >= 31}; isDpiChange: Boolean{$ifend}); override;
+    procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
     procedure ConstrainedResize(var MinWidth, MinHeight, MaxWidth, MaxHeight: Integer); override;
     procedure CreateParams(var Params: TCreateParams); override;
     procedure DoSetRange(Value: Integer); virtual;
@@ -197,11 +195,7 @@ procedure SpTBXPaintPageScrollButton(AControl: TControl; ACanvas: TCanvas; const
 implementation
 
 uses
-  SysUtils, Types, TB2Common,
-  {$IF CompilerVersion >= 24} // for Delphi XE3 and up
-  System.UITypes,
-  {$IFEND}
-  UxTheme, Themes;
+  SysUtils, Types, TB2Common, System.UITypes, UxTheme, Themes;
 
 const
   ScrollDelay = 300;
@@ -461,8 +455,7 @@ begin
   Result := NewHeight > FButtonSize * 3;
 end;
 
-procedure TSpTBXCustomPageScroller.ChangeScale(M, D: Integer
-  {$if CompilerVersion >= 31}; isDpiChange: Boolean{$ifend});
+procedure TSpTBXCustomPageScroller.ChangeScale(M, D: Integer; isDpiChange: Boolean);
 begin
   inherited;
   FButtonSize := MulDiv(FButtonSize, M, D);

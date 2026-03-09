@@ -1,7 +1,7 @@
 unit SpTBXItem;
 
 {==============================================================================
-Version 2.5.10
+Version 2.5.12
 
 The contents of this file are subject to the SpTBXLib License; you may
 not use or distribute this file except in compliance with the
@@ -65,9 +65,7 @@ Development notes:
 interface
 
 {$BOOLEVAL OFF}   // Unit depends on short-circuit boolean evaluation
-{$IF CompilerVersion >= 25} // for Delphi XE4 and up
-  {$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
-{$IFEND}
+{$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
 
 uses
   Windows, Messages, Classes, SysUtils, Forms, Controls, Graphics, ImgList,
@@ -369,9 +367,7 @@ type
     property GroupIndex;
     property HelpContext;
     property ImageIndex;
-    {$IF CompilerVersion >= 34} // for Delphi Sydney and up
     property ImageName;
-    {$IFEND}
     property Images;
     property InheritOptions;
     property MaskOptions;
@@ -517,9 +513,7 @@ type
   published
     property Enabled;
     property ImageIndex;
-    {$IF CompilerVersion >= 34} // for Delphi Sydney and up
     property ImageName;
-    {$IFEND}
     property Images;
     property InheritOptions;
     property MaskOptions;
@@ -563,9 +557,7 @@ type
   TSpTBXRightAlignSpacerItem = class(TSpTBXCustomLabelItem)
   published
     property ImageIndex;
-    {$IF CompilerVersion >= 34} // for Delphi Sydney and up
     property ImageName;
-    {$IFEND}
     property Images;
     property MaskOptions;
     property Options;
@@ -826,7 +818,7 @@ type
     procedure WMSpSkinChange(var Message: TMessage); message WM_SPSKINCHANGE;
   protected
     FPrevSize: TSize;
-    procedure ChangeScale(M, D: Integer{$IF CompilerVersion >= 31}; isDpiChange: Boolean{$IFEND}); override;
+    procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
     procedure DrawBackground(DC: HDC; const DrawRect: TRect); override;
     procedure DrawNCArea(const DrawToDC: Boolean; const ADC: HDC; const Clip: HRGN); override;
     procedure DoDrawBackground(ACanvas: TCanvas; ARect: TRect; const PaintStage: TSpTBXPaintStage; var PaintDefault: Boolean); virtual;
@@ -925,7 +917,7 @@ type
     function CanItemClick(Item: TTBCustomItem; Button: TMouseButton; Shift: TShiftState; X, Y: Integer): Boolean; virtual;
     procedure DoItemClick(Item: TTBCustomItem; Button: TMouseButton; Shift: TShiftState; X, Y: Integer); virtual;
     procedure DoItemNotification(Ancestor: TTBCustomItem; Relayed: Boolean; Action: TTBItemChangedAction; Index: Integer; Item: TTBCustomItem); virtual;
-    procedure ChangeScale(M, D: Integer{$IF CompilerVersion >= 31}; isDpiChange: Boolean{$IFEND}); override;
+    procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
 
     property CompoundToolbar: Boolean read FCompoundToolbar write FCompoundToolbar;
   public
@@ -1038,7 +1030,7 @@ type
     function GetFloatingWindowParentClass: TTBFloatingWindowParentClass; override;
 
     // Sizing
-    procedure ChangeScale(M, D: Integer{$IF CompilerVersion >= 31}; isDpiChange: Boolean{$IFEND}); override;
+    procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
     function CalcSize(ADock: TTBDock): TPoint; virtual;
     function DoArrange(CanMoveControls: Boolean; PreviousDockType: TTBDockType; NewFloating: Boolean; NewDock: TTBDock): TPoint; override;
     procedure GetBaseSize(var ASize: TPoint); override;
@@ -1706,13 +1698,8 @@ implementation
 {$R SpTBXGlyphs.res}
 
 uses
-  Themes, UxTheme,
-  TypInfo, Types,
-  {$IF CompilerVersion >= 24} // for Delphi XE3 and up
-  System.UITypes,
-  {$IFEND}
-  ComCtrls, CommCtrl, ShellApi, DwmApi,
-  TB2Anim, TB2Common;
+  Themes, UxTheme, TypInfo, Types, System.UITypes,
+  ComCtrls, CommCtrl, ShellApi, DwmApi, TB2Anim, TB2Common;
 
 const
   ROP_DSPDxax = $00E20746;
@@ -3123,7 +3110,7 @@ begin
           SaveIndex := SaveDC(ACanvas.Handle);
           try
             ExcludeClipRect(ACanvas.Handle, ARect.Left, ARect.Bottom - PP3, ARect.Right, ARect.Bottom);
-            SpTBXStyleServices(Toolbar).DrawElement(ACanvas.Handle, Details, GripR, nil {$IF CompilerVersion >= 33}, W.CurrentPPI{$IFEND});  // DPI param introduced on 10.3 Rio
+            SpTBXStyleServices(Toolbar).DrawElement(ACanvas.Handle, Details, GripR, nil, W.CurrentPPI);  // DPI param introduced on 10.3 Rio
           finally
             RestoreDC(ACanvas.Handle, SaveIndex);
           end;
@@ -4606,7 +4593,7 @@ begin
           DropDownC := GetTextColor(ItemInfo.ComboState);
         if ItemInfo.IsSunkenCaption then
           P := Point(P.X + PPIScale(1), P.Y + PPIScale(1));
-        SpDrawArrow(Canvas, P.X, P.Y, DropDownC, not ItemInfo.IsVertical, False, PPIScale(2));
+        SpDrawArrow(Canvas, P.X, P.Y, DropDownC, not ItemInfo.IsVertical, False, PPIScale(3));
       end;
       if not ItemInfo.IsSplit and not IsSpecialDropDown then begin
         if View.Orientation <> tbvoVertical then Dec(R.Right, Self.tbDropdownArrowWidth)
@@ -5316,8 +5303,8 @@ end;
 procedure TSpTBXSystemMenuItemViewer.CalcSize(const Canvas: TCanvas;
   var AWidth, AHeight: Integer);
 begin
-  AWidth := {$IF CompilerVersion>= 33}View.Window.{$IFEND}GetSystemMetrics(SM_CXSMICON) + PPIScale(2);
-  AHeight := {$IF CompilerVersion>= 33}View.Window.{$IFEND}GetSystemMetrics(SM_CYSMICON) + PPIScale(2);
+  AWidth := View.Window.GetSystemMetrics(SM_CXSMICON) + PPIScale(2);
+  AHeight := View.Window.GetSystemMetrics(SM_CYSMICON) + PPIScale(2);
 end;
 
 procedure TSpTBXSystemMenuItemViewer.Paint(const Canvas: TCanvas;
@@ -5924,7 +5911,7 @@ end;
 //WMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM
 { TSpTBXDock }
 
-procedure TSpTBXDock.ChangeScale(M, D: Integer{$IF CompilerVersion >= 31}; isDpiChange: Boolean{$IFEND});
+procedure TSpTBXDock.ChangeScale(M, D: Integer; isDpiChange: Boolean);
 begin
   FScaling := True;
   // Reset anchor prev size
@@ -6793,7 +6780,7 @@ begin
   Result := True;
 end;
 
-procedure TSpTBXToolbar.ChangeScale(M, D: Integer{$IF CompilerVersion >= 31}; isDpiChange: Boolean{$IFEND});
+procedure TSpTBXToolbar.ChangeScale(M, D: Integer; isDpiChange: Boolean);
 var
   I, W, H: Integer;
   T: TSpTBXCustomItem;
@@ -7057,7 +7044,7 @@ begin
   inherited;
 end;
 
-procedure TSpTBXCustomToolWindow.ChangeScale(M, D: Integer{$IF CompilerVersion >= 31}; isDpiChange: Boolean{$IFEND});
+procedure TSpTBXCustomToolWindow.ChangeScale(M, D: Integer; isDpiChange: Boolean);
 begin
   inherited;
   // Do not scale FBarSize, it's updated with scaled Width/Height values in SizeChanging
@@ -7648,10 +7635,8 @@ begin
       if TSpTBXCustomItem(AItem).ToolbarStylePopup then
         TSpTBXPopupWindowView(View).SetIsToolbar(True);
       // Set the StyleName to match the Toolbar or Toolbar.Parent
-      {$IF CompilerVersion >= 34} // for Delphi Sydney and up
       if Assigned(View.ParentView) then
         StyleName := View.ParentView.Window.GetStyleName;
-      {$IFEND}
     end;
 
   FMaximumImageSize := SpGetMenuMaximumImageSize(View);

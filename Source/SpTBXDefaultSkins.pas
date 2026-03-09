@@ -1,7 +1,7 @@
 unit SpTBXDefaultSkins;
 
 {==============================================================================
-Version 2.5.10
+Version 2.5.12
 
 The contents of this file are subject to the SpTBXLib License; you may
 not use or distribute this file except in compliance with the
@@ -37,9 +37,7 @@ Requirements:
 interface
 
 {$BOOLEVAL OFF}   // Unit depends on short-circuit boolean evaluation
-{$IF CompilerVersion >= 25} // for Delphi XE4 and up
-  {$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
-{$IFEND}
+{$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
 
 uses
   Windows, Messages, Classes, SysUtils, Graphics, Controls, SpTBXSkins;

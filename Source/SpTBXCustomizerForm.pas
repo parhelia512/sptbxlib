@@ -38,17 +38,13 @@ Development notes:
 interface
 
 {$BOOLEVAL OFF}   // Unit depends on short-circuit boolean evaluation
-{$IF CompilerVersion >= 25} // for Delphi XE4 and up
-  {$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
-{$IFEND}
+{$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, ComCtrls, ImgList, CheckLst,
-  {$IF CompilerVersion >= 33} // for Delphi Rio and up
   System.ImageList, Vcl.BaseImageCollection, Vcl.ImageCollection,
   Vcl.VirtualImageList,
-  {$IFEND}
   TB2Toolbar, TB2Item,
   SpTBXSkins, SpTBXItem, SpTBXControls, SpTBXEditors, SpTBXTabs, SpTBXCustomizer;
 
@@ -115,9 +111,7 @@ type
     procedure FormResize(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   protected
-    {$IF CompilerVersion >= 33} // for Delphi Rio and up
     FInternalVirtualImage: TVirtualImageList;
-    {$IFEND}
     FCustomizerImages: TCustomImageList;
     procedure DoFillCommands(ToolbarList, ItemList, ShortcutsList: TStringList); override;
     procedure DoSkinChange; override;
@@ -189,11 +183,9 @@ end;
 
 procedure TSpTBXCustomizeForm.FormCreate(Sender: TObject);
 begin
-  {$IF CompilerVersion >= 33} // for Delphi Rio and up
   // Use a TVirtualImageList to make the customizer form
   // multi-monitor and High DPI enabled.
   FInternalVirtualImage := TVirtualImageList.Create(Self);
-  {$IFEND}
   FCustomizerImages := Customizer.Images;
 
   ClosePanel.Visible := not Embedded;
@@ -210,9 +202,7 @@ end;
 
 procedure TSpTBXCustomizeForm.FormDestroy(Sender: TObject);
 begin
-  {$IF CompilerVersion >= 33} // for Delphi Rio and up
   FInternalVirtualImage.Free;
-  {$IFEND}
 end;
 
 procedure TSpTBXCustomizeForm.FormShow(Sender: TObject);
@@ -220,7 +210,6 @@ begin
   SpTBXTabControl1.ActiveTabIndex := 0;
 
   if Assigned(FCustomizerImages) then begin
-    {$IF CompilerVersion >= 33} // for Delphi Rio and up
     // The DPI might be different from the main Form, try to use an internal
     // TVirtualImageList so it is DPI scaled to the child Form.
     if FCustomizerImages is TVirtualImageList then
@@ -233,7 +222,6 @@ begin
         // Point the original IL to the internal VirtualIL
         FCustomizerImages := FInternalVirtualImage;
       end;
-    {$IFEND}
 
     // Setup the listboxes
     lbCommands.ItemHeight := FCustomizerImages.Height + PPIScale(4);

@@ -1,7 +1,7 @@
 unit SpTBXCustomizer;
 
 {==============================================================================
-Version 2.5.10
+Version 2.5.12
 
 The contents of this file are subject to the SpTBXLib License; you may
 not use or distribute this file except in compliance with the
@@ -37,9 +37,7 @@ Requirements:
 interface
 
 {$BOOLEVAL OFF}   // Unit depends on short-circuit boolean evaluation
-{$IF CompilerVersion >= 25} // for Delphi XE4 and up
-  {$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
-{$IFEND}
+{$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
@@ -279,8 +277,19 @@ begin
       Exit;
     TBName := L[0];
     ItemName := L[1];
-    if (L.Count > 2) and (L[2] <> '0') then
-      ShortCut := TextToShortCut(L[2]);
+
+    // Fix #124, store ShortCut as integer, as it gets incorrectly loaded
+    // when using a different keyboard layout
+    if L.Count > 2 then begin
+      if TryStrToInt(L[2], I) then
+        ShortCut := I
+      else begin
+        // If the shortcut was saved as text try to load it
+        if (L[2] <> '0') then
+          ShortCut := TextToShortCut(L[2]);
+      end;
+    end;
+
     I := RootItemsList.IndexOf(TBName);
     if I > -1 then begin
       ParentItem := RootItemsList.Objects[I] as TTBCustomItem;
@@ -337,7 +346,9 @@ procedure SaveItemOptions(OwnerComponent: TComponent;
   var
     ShortCut: string;
   begin
-    ShortCut := ShortCutToText(AItem.ShortCut);
+    // Fix #124, store ShortCut as integer, do not use ShortCutToText
+    // as it gets incorrectly loaded when using a different keyboard layout
+    ShortCut := IntToStr(AItem.ShortCut);
     if ShortCut = '' then ShortCut := '0'
     else if Pos(' ', ShortCut) > 0 then ShortCut := '"' + ShortCut + '"';
     OptionsList.Add(ComponentName + ', ' + AItem.Name + ', ' + ShortCut);

@@ -1,7 +1,7 @@
 unit SpTBXExtEditors;
 
 {==============================================================================
-Version 2.5.10
+Version 2.5.12
 
 The contents of this file are subject to the SpTBXLib License; you may
 not use or distribute this file except in compliance with the
@@ -37,9 +37,7 @@ Requirements:
 interface
 
 {$BOOLEVAL OFF}   // Unit depends on short-circuit boolean evaluation
-{$IF CompilerVersion >= 25} // for Delphi XE4 and up
-  {$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
-{$IFEND}
+{$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
 
 uses
   Windows, Messages, Classes, SysUtils, Controls, Graphics, ImgList, Forms,
@@ -142,7 +140,7 @@ type
     procedure DoDrawItem(ACanvas: TCanvas; var ARect: TRect; Index: Integer; const State: TOwnerDrawState;
       const PaintStage: TSpTBXPaintStage; var PaintDefault: Boolean); override;
     procedure DropDown; override;
-    procedure ChangeScale(M, D: Integer{$IF CompilerVersion >= 31}; isDpiChange: Boolean{$IFEND}); override;
+    procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -207,11 +205,8 @@ procedure SpDrawColorDropDownButton(ACanvas: TCanvas; ARect: TRect; Pushed: Bool
 implementation
 
 uses
-  Dialogs, TB2Common,
-  {$IF CompilerVersion >= 24} // for Delphi XE3 and up
-  System.Types, System.UITypes,
-  {$IFEND}
-  Themes, SpTBXFormPopupMenu, SpTBXColorPickerForm;
+  Dialogs, TB2Common, System.Types, System.UITypes, Themes,
+  SpTBXFormPopupMenu, SpTBXColorPickerForm;
 
 var
   DefaultColorPickerDropDownMenu: TSpTBXColorEditPopupMenu = nil;
@@ -573,7 +568,7 @@ begin
   inherited;
 end;
 
-procedure TSpTBXFontComboBox.ChangeScale(M, D: Integer{$IF CompilerVersion >= 31}; isDpiChange: Boolean{$IFEND});
+procedure TSpTBXFontComboBox.ChangeScale(M, D: Integer; isDpiChange: Boolean);
 var
   I: Integer;
 begin

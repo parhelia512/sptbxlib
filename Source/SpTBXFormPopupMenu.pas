@@ -1,7 +1,7 @@
 unit SpTBXFormPopupMenu;
 
 {==============================================================================
-Version 2.5.10
+Version 2.5.12
 
 The contents of this file are subject to the SpTBXLib License; you may
 not use or distribute this file except in compliance with the
@@ -37,9 +37,7 @@ Requirements:
 interface
 
 {$BOOLEVAL OFF}   // Unit depends on short-circuit boolean evaluation
-{$IF CompilerVersion >= 25} // for Delphi XE4 and up
-  {$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
-{$IFEND}
+{$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
 
 uses
   Windows, Messages, Classes, SysUtils, Controls, Graphics, ImgList, Forms,
@@ -983,7 +981,6 @@ begin
 
   // Use the WrapperForm to show the PopupForm
   if Assigned(FPopupForm) then begin
-    {$IF CompilerVersion >= 33} // 10.3 Rio and up
     // Normally, setting the Parent scales the Form but here it doesn't because
     // FPopupForm has a FreeNotification (see TControl.SetParent)
     // Behavior changed on 11 Alexandria (see TControl.SetParent)
@@ -1000,7 +997,6 @@ begin
       FPopupForm.Width := MulDiv(W, PPI, 96);
       FPopupForm.Height := MulDiv(H, PPI, 96);
     end;
-    {$IFEND}
 
     FPopupFormState.PopupForm := FPopupForm;
     FPopupFormState.BorderStyle := FPopupForm.BorderStyle;
@@ -1012,11 +1008,9 @@ begin
       ClientR.Bottom := FPopupFormPrevSize.cy;
     end;
 
-    {$IF CompilerVersion >= 34} // for Delphi Sydney and up
     // Set the StyleName of the wrapper form
     if Assigned(PopupControl) then
       FWrapperForm.StyleName := PopupControl.StyleName;
-    {$IFEND}
 
     FPopupForm.Parent := FWrapperForm;
     FPopupForm.Align := alClient;

@@ -1,7 +1,7 @@
 unit SpTBXEditors;
 
 {==============================================================================
-Version 2.5.10
+Version 2.5.12
 
 The contents of this file are subject to the SpTBXLib License; you may
 not use or distribute this file except in compliance with the
@@ -44,16 +44,11 @@ To Do:
 interface
 
 {$BOOLEVAL OFF}   // Unit depends on short-circuit boolean evaluation
-{$IF CompilerVersion >= 25} // for Delphi XE4 and up
-  {$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
-{$IFEND}
+{$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
 
 uses
   Windows, Messages, Classes, SysUtils, Controls, Graphics, ImgList, Forms,
-  Menus, StdCtrls, ExtCtrls, ActnList, CheckLst,
-  {$IF CompilerVersion >= 24} // for Delphi XE3 and up
-  System.UITypes,
-  {$IFEND}
+  Menus, StdCtrls, ExtCtrls, ActnList, CheckLst, System.UITypes,
   TB2Toolbar, TB2Item, TB2ExtItems,
   SpTBXSkins, SpTBXItem, SpTBXControls;
 
@@ -277,7 +272,7 @@ type
 
   TSpTBXComboBox = class(TComboBox)
   private
-    {$IF CompilerVersion < 35} // For older versions, Delphi 11 introduced AutoDropDownWidth
+    {$IF CompilerVersion < 35} // For older versions, Delphi 11 Alexandria introduced AutoDropDownWidth
     FAutoDropDownWidth: Boolean;
     {$IFEND}
     FAutoItemHeight: Boolean;
@@ -325,7 +320,7 @@ type
     procedure InvalidateFrame;
     property MouseInControl: Boolean read FMouseInControl;
   published
-    {$IF CompilerVersion < 35} // For older versions, Delphi 11 introduced AutoDropDownWidth
+    {$IF CompilerVersion < 35} // For older versions, Delphi 11 Alexandria introduced AutoDropDownWidth
     property AutoDropDownWidth: Boolean read FAutoDropDownWidth write FAutoDropDownWidth default False;
     {$IFEND}
     property AutoItemHeight: Boolean read FAutoItemHeight write FAutoItemHeight default True;
@@ -463,9 +458,7 @@ type
     property HelpContext;
     property Hint;
     property ImageIndex;
-    {$IF CompilerVersion >= 34} // for Delphi Sydney and up
     property ImageName;
-    {$IFEND}
     property Images;
     property ShortCut;
     property Visible;
@@ -630,7 +623,7 @@ begin
       if Sz.cx > MaxWidth then MaxWidth := Sz.cx;
     end;
 
-    MaxWidth := MaxWidth + {$IF CompilerVersion>= 33}Combo.{$IFEND}GetSystemMetrics(SM_CXVSCROLL) + RightMargin;
+    MaxWidth := MaxWidth + Combo.GetSystemMetrics(SM_CXVSCROLL) + RightMargin;
     if Combo.Width < MaxWidth then
       SendMessage(Combo.Handle, CB_SETDROPPEDWIDTH, MaxWidth, 0);
   finally
@@ -827,7 +820,7 @@ begin
           BR.Bottom := BR.Bottom - 1;
         SpDrawXPEditButton(ACanvas, BR, Enabled, FrameHotTrack, UpHotTrack, UpPushed, RightAligned);
         C := CurrentSkin.GetTextColor(AControl, skncEditButton, State);
-        SpDrawArrow(ACanvas, X, Y, C, True, True, SpPPIScale(2, DPI));
+        SpDrawArrow(ACanvas, X, Y, C, True, True, SpPPIScale(3, DPI));
         if FrameHotTrack then
           BR.Bottom := BR.Bottom + 1;
         // Down button
@@ -839,7 +832,7 @@ begin
           BR.Top := BR.Top + 1;
         SpDrawXPEditButton(ACanvas, BR, Enabled, FrameHotTrack, DownHotTrack, DownPushed, RightAligned);
         C := CurrentSkin.GetTextColor(AControl, skncEditButton, State);
-        SpDrawArrow(ACanvas, X, Y, C, True, False, SpPPIScale(2, DPI));
+        SpDrawArrow(ACanvas, X, Y, C, True, False, SpPPIScale(3, DPI));
       end;
   end;
 end;
@@ -1790,7 +1783,7 @@ end;
 
 procedure TSpTBXComboBox.DropDown;
 begin
-  {$IF CompilerVersion < 35} // For older versions, Delphi 11 introduced AutoDropDownWidth
+  {$IF CompilerVersion < 35} // For older versions, Delphi 11 Alexandria introduced AutoDropDownWidth
   if FAutoDropDownWidth then
     SpCalcMaxDropDownWidth(Self, PPIScale(8));
   {$IFEND}
@@ -3241,7 +3234,7 @@ begin
   if IsToolbarStyle then
     Result := PPIScale(CDefaultSpinButtonSize + 1)
   else
-    Result := {$IF CompilerVersion>= 33}View.Window.{$IFEND}GetSystemMetrics(SM_CXMENUCHECK) + PPIScale(1);
+    Result := View.Window.GetSystemMetrics(SM_CXMENUCHECK) + PPIScale(1);
 end;
 
 function TSpTBXSpinEditViewer.GetItem: TSpTBXSpinEditItem;

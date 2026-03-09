@@ -1,7 +1,7 @@
 unit SpTBXImageList;
 
 {==============================================================================
-Version 2.5.10
+Version 2.5.12
 
 The contents of this file are subject to the SpTBXLib License; you may
 not use or distribute this file except in compliance with the
@@ -42,21 +42,11 @@ Development notes:
 interface
 
 {$BOOLEVAL OFF}   // Unit depends on short-circuit boolean evaluation
-{$IF CompilerVersion >= 25} // for Delphi XE4 and up
-  {$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
-{$IFEND}
+{$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
 
 uses
-  Windows, Messages, Classes, SysUtils, Graphics,
-  ImgList,
-  {$IF CompilerVersion >= 24} // for Delphi XE3 and up
-  System.UITypes,
-  {$IFEND}
-  {$IF CompilerVersion >= 33} // for Delphi Rio and up
-  // TImageCollection and TVirtualImagelist introduced on Rio
-  Vcl.VirtualImageList, Vcl.BaseImageCollection, Vcl.ImageCollection,
-  {$IFEND}
-  Types;
+  Windows, Messages, Classes, SysUtils, Graphics, ImgList, System.UITypes, Types,
+  Vcl.VirtualImageList, Vcl.BaseImageCollection, Vcl.ImageCollection;
 
 type
   { TSpTBXImageList }
@@ -64,9 +54,7 @@ type
   TSpTBXImageList = class
   public
     ImageList: TCustomImageList;
-    {$IF CompilerVersion >= 33} // for Delphi Rio and up
     ImageCollection: TImageCollection;
-    {$IFEND}
     constructor Create(AOwner: TComponent); virtual;
     destructor Destroy; override;
     procedure LoadGlyphs(GlyphPath: string);
@@ -100,7 +88,6 @@ begin
   TArray.Sort<string>(Files, TStringComparer.Ordinal);
 
   for S in Files do begin
-    {$IF CompilerVersion >= 34} // for Delphi Sydney and up
     // TImageCollection and TVirtualImagelist introduced on Rio,
     // but TImageCollection.Add was introduced on Sydney
     if IL is TVirtualImageList then begin
@@ -113,9 +100,7 @@ begin
         TImageCollection(TVirtualImageList(IL).ImageCollection).Add(FilenameS, S);
       end;
     end
-    else
-    {$IFEND}
-    begin
+    else begin
       // Try to add only PNGs with the same size as the Image List
       // Notation of files must be filename-16x16.png
       FilenameS := TPath.GetFileNameWithoutExtension(S);
@@ -141,10 +126,8 @@ begin
     end;
   end;
 
-  {$IF CompilerVersion >= 34} // for Delphi Sydney and up
   if IL is TVirtualImageList then
     TVirtualImageList(IL).AutoFill := True;
-  {$IFEND}
 end;
 
 //WMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM
@@ -152,22 +135,16 @@ end;
 
 constructor TSpTBXImageList.Create(AOwner: TComponent);
 begin
-  {$IF CompilerVersion >= 33} // for Delphi Rio and up
   // TImageCollection and TVirtualImagelist introduced on Rio
   ImageCollection := TImageCollection.Create(AOwner);
   ImageList := TVirtualImageList.Create(AOwner);
   TVirtualImageList(ImageList).ImageCollection := ImageCollection;
-  {$ELSE}
-  ImageList := TImageList.Create(Self);
-  {$IFEND}
 end;
 
 destructor TSpTBXImageList.Destroy;
 begin
-  {$IF CompilerVersion >= 33} // for Delphi Rio and up
   // TImageCollection and TVirtualImagelist introduced on Rio
   ImageCollection.Free;
-  {$IFEND}
   ImageList.Free;
 
   inherited;

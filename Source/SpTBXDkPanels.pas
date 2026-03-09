@@ -1,7 +1,7 @@
 unit SpTBXDkPanels;
 
 {==============================================================================
-Version 2.5.10
+Version 2.5.12
 
 The contents of this file are subject to the SpTBXLib License; you may
 not use or distribute this file except in compliance with the
@@ -49,9 +49,7 @@ Limitations:
 interface
 
 {$BOOLEVAL OFF}   // Unit depends on short-circuit boolean evaluation
-{$IF CompilerVersion >= 25} // for Delphi XE4 and up
-  {$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
-{$IFEND}
+{$LEGACYIFEND ON} // requires $IF to be terminated by $IFEND (XE4+ allows both $ENDIF and $IFEND)
 
 uses
   Windows, Messages, Classes, SysUtils, Controls, Graphics, ImgList, Forms,
@@ -106,10 +104,8 @@ type
     procedure CMSPChangeScale(var Message: TMessage); message CM_SPCHANGESCALE;
   protected
     procedure AlignControls(AControl: TControl; var Rect: TRect); override;
-    {$IF CompilerVersion >= 27}  // for Delphi XE6 and up
     function DefaultScalingFlags: TScalingFlags; override;
-    {$IFEND}
-    procedure ChangeScale(M, D: Integer{$IF CompilerVersion >= 31}; isDpiChange: Boolean{$IFEND}); override;
+    procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
     procedure DoInsertRemoveBar(Sender: TObject; Inserting: Boolean; Bar: TTBCustomDockableWindow); virtual; // OnInsertRemoveBar is republished
     procedure DoRequestDock(Sender: TObject; Bar: TTBCustomDockableWindow; var Accept: Boolean); virtual; // OnRequestDock is republished
     procedure Loaded; override;
@@ -225,7 +221,7 @@ type
     FDockForms: TList;
 
     // Component
-    procedure ChangeScale(M, D: Integer{$IF CompilerVersion >= 31}; isDpiChange: Boolean{$IFEND}); override;
+    procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
     procedure CreateParams(var Params: TCreateParams); override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     procedure Loaded; override;
@@ -386,7 +382,7 @@ type
     procedure WMEraseBkgnd(var Message: TWmEraseBkgnd); message WM_ERASEBKGND;
   protected
     FRestorePos: Integer;
-    procedure ChangeScale(M, D: Integer{$IF CompilerVersion >= 31}; isDpiChange: Boolean{$IFEND}); override;
+    procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
     procedure DoDrawBackground(ACanvas: TCanvas; ARect: TRect; const PaintStage: TSpTBXPaintStage; var PaintDefault: Boolean); virtual;
     procedure DoMoved; virtual;
     function DoMoving(var NewSize: Integer): Boolean; virtual;
@@ -463,11 +459,7 @@ procedure SpTBIniSavePositions(const OwnerComponent: TComponent; const IniFile: 
 implementation
 
 uses
-  Types,
-  {$IF CompilerVersion >= 24} // for Delphi XE3 and up
-  System.UITypes,
-  {$IFEND}
-  Themes, ComCtrls, Registry, TB2Consts, TB2Common;
+  Types, System.UITypes, Themes, ComCtrls, Registry, TB2Consts, TB2Common;
 
 const
   HT_TB2k_Border = 2000;
@@ -1447,16 +1439,14 @@ begin
     UpdateDPLateralSize(Width, Height);
 end;
 
-{$IF CompilerVersion >= 27}  // for Delphi XE6 and up
 function TSpTBXCustomMultiDock.DefaultScalingFlags: TScalingFlags;
 begin
   // Make sure Width and Height are not scaled
   Result := inherited;
   Result := Result - [sfWidth, sfHeight];
 end;
-{$IFEND}
 
-procedure TSpTBXCustomMultiDock.ChangeScale(M, D: Integer{$IF CompilerVersion >= 31}; isDpiChange: Boolean{$IFEND});
+procedure TSpTBXCustomMultiDock.ChangeScale(M, D: Integer; isDpiChange: Boolean);
 begin
   inherited;
   // The parent Form doesn't scale itself before scaling child controls, so
@@ -1898,7 +1888,7 @@ begin
   FreeAndNil(FDockForms);  // After inherited, Notification accesses FDockForms
 end;
 
-procedure TSpTBXCustomDockablePanel.ChangeScale(M, D: Integer{$IF CompilerVersion >= 31}; isDpiChange: Boolean{$IFEND});
+procedure TSpTBXCustomDockablePanel.ChangeScale(M, D: Integer; isDpiChange: Boolean);
 begin
   // Scaling is done by the MultiDock and by the floating Form when undocked
   BeginUpdate;
@@ -3326,7 +3316,7 @@ begin
   Invalidate;
 end;
 
-procedure TSpTBXCustomSplitter.ChangeScale(M, D: Integer{$IF CompilerVersion >= 31}; isDpiChange: Boolean{$IFEND});
+procedure TSpTBXCustomSplitter.ChangeScale(M, D: Integer; isDpiChange: Boolean);
 begin
   inherited;
   FGripSize := MulDiv(FGripSize, M, D);

@@ -42,10 +42,12 @@ object SpTBXColorPickerForm: TSpTBXColorPickerForm
     object SpTBXTabSheet2: TSpTBXTabSheet
       Left = 0
       Top = 26
-      Width = 213
-      Height = 141
+      Width = 209
+      Height = 140
       Caption = ''
       ImageIndex = 3
+      ExplicitWidth = 213
+      ExplicitHeight = 141
       DesignSize = (
         209
         140)
