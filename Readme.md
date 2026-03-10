@@ -38,7 +38,7 @@ www.mozilla.org/MPL
 ## Installation
 
 ### Requirements
-- RAD Studio XE2 or newer:
+- RAD Studio 10.4 Sydney or newer:
 - Jordan Russell's Toolbar 2000 (www.jrsoftware.org)
 
 ### Installing with Silverpoint MultiInstaller
@@ -63,12 +63,13 @@ You are ready to install the component packages, just run MultiInstaller, select
 First you need to apply the TB2K patch:
 - Extract TB2K to a folder
 - Extract SpTBXLib to a folder
-- Copy the contents of SpTBXLib\TB2K Patch folder to TB2K\Source folder
+- Copy the contents of "SpTBXLib\TB2K Patch" folder to "TB2K\Source" folder
 - Run tb2kpatch.bat
 
-Add the Source directories to the Library Path
-- Add 'TB2K\Source' directory to Tools->Options->Language->Delphi->Library->Library Path
-- Add 'SpTBXLib\Source' directory to Tools->Options->Language->Delphi->Library->Library Path
+Add the Source directories to the Library Path:
+Open Rad Studio, go to Tools->Options->Language->Delphi->Library->Library Path
+- Add "TB2K\Source" directory
+- Add "SpTBXLib\Source" directory
 
 Compile and install the components
 - If you have a previous version of TB2K installed in the IDE remove it from Component->Install Packages, select TB2K from the list and press the Remove button.

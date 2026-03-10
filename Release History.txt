@@ -1,9 +1,9 @@
 9 March 2026 - version 2.5.12
-- Added Rad Studio 13 Florence support.
-- Removed support for older versions of Rad Studio. The minimum supported version is 10.4 Sydney.
-- Fixed #123, dropdown arrow is not scaled properly. 
-- Fixed #124, store shortcut as integer.
-
+  - Added Rad Studio 13 Florence support.
+  - Removed support for older versions of Rad Studio. The minimum supported version is 10.4 Sydney.
+  - Fixed #123, dropdown arrow is not scaled properly. 
+  - Fixed #124, store shortcut as integer.
+ 
 28 November 2023 - version 2.5.11
   - Added Rad Studio 12 Athens support.
   - Added package files for Delphi Rio and up, vclwinx added to runtime package 
